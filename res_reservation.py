@@ -1,31 +1,7 @@
 import streamlit as st
-import qrcode
 import urllib.parse
-from io import BytesIO
-# Ensure QR code module is available
-try:
-    import qrcode
-except ModuleNotFoundError:
-    st.error("❌ QR Code module not found. Try adding `qrcode[pil]` to your `requirements.txt` and redeploying.")
-    st.stop()
-# Function to generate QR code
-def generate_qr(data):
-    qr = qrcode.QRCode(
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
-        box_size=8,
-        border=4
-    )
-    qr.add_data(data)
-    qr.make(fit=True)
-    img = qr.make_image(fill="black", back_color="white")
-    
-    img_buffer = BytesIO()
-    img.save(img_buffer, format="PNG")
-    
-    return img_buffer.getvalue()
 # Display restaurant logo (Optional)
-st.image("sanjha_dhaba.png", use_container_width=True)
+st.image("sanjha_dhaba.png", use_column_width=True)
 st.write("Please fill in the details to proceed with your table reservation...")
 # Initialize session state variables
 if "qr_data" not in st.session_state:
@@ -74,13 +50,11 @@ if submit_btn:
 # ✅ Show QR Code button only AFTER reservation is successful
 if st.session_state.reservation_done:
     if st.button("Generate QR Code"):
-        try:
-            qr_image = generate_qr(st.session_state.qr_data)
-            st.image(qr_image, caption="Scan to view your reservation summary")
-            st.download_button("Download QR Code", data=qr_image, file_name="qr_code.png", mime="image/png")
-        except Exception as e:
-            st.error(f"⚠️ Error generating QR Code: {e}")
-            # Fallback: Google Charts API for QR Code
-            qr_fallback_url = f"https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl={urllib.parse.quote(st.session_state.qr_data)}"
-            st.image(qr_fallback_url, caption="Scan to view your reservation summary")
-            st.markdown(f"[Download QR Code]({qr_fallback_url})", unsafe_allow_html=True)
+        # Generate QR Code using Google API
+        qr_url = f"https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl={urllib.parse.quote(st.session_state.qr_data)}"
+        
+        # Display QR Code
+        st.image(qr_url, caption="Scan to view your reservation summary")
+        
+        # Download QR Code (as a clickable link)
+        st.markdown(f"[Download QR Code]({qr_url})", unsafe_allow_html=True)
