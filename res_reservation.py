@@ -1,7 +1,7 @@
 import streamlit as st
 import urllib.parse
 # Display restaurant logo (Optional)
-st.image("sanjha_dhaba.png", use_column_width=True)
+st.image("sanjha_dhaba.png", use_container_width=True)
 st.write("Please fill in the details to proceed with your table reservation...")
 # Initialize session state variables
 if "qr_data" not in st.session_state:
