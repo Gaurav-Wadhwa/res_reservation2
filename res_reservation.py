@@ -1,5 +1,9 @@
 import streamlit as st
 import urllib.parse
+
+def generate_qr(data):
+    encoded_data = urllib.parse.quote(data)
+    return f"https://quickchart.io/chart?chs=200x200&cht=qr&chl={encoded_data}"
 # Display restaurant logo (Optional)
 st.image("sanjha_dhaba.png", use_container_width=True)
 st.write("Please fill in the details to proceed with your table reservation...")
@@ -51,7 +55,7 @@ if submit_btn:
 if st.session_state.reservation_done:
     if st.button("Generate QR Code"):
         # Generate QR Code using Google API
-        qr_url = f"https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl={urllib.parse.quote(st.session_state.qr_data)}"
+        qr_url = generate_qr(st.session_state.qr_data)
         
         # Display QR Code
         st.image(qr_url, caption="Scan to view your reservation summary")
